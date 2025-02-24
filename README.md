@@ -1,4 +1,4 @@
-# Crypto Trading Platform 
+# Crypto Trading Platform (CS50x Final Project)
 #### Video Demo:  <URL HERE>
 
 ## Description
@@ -14,8 +14,8 @@ This is a paper trading platform for cryptocurrencies, allowing users to practic
 ## Tech Stack
 - Backend: Flask (Python), Flask-SQLAlchemy
 - Database: SQLite
-- Frontend: HTML, CSS (Bootstrap), JavaScript
-- Dependencies: bcrypt, requests
+- Frontend: HTML, CSS (Bootstrap, Bulma), JavaScript
+- Dependencies: bcrypt, requests, cachetools
 
 ## Setup Instructions
 1. Clone the repository: `git clone <repository-url>`
@@ -31,12 +31,10 @@ This is a paper trading platform for cryptocurrencies, allowing users to practic
 3. Go to the "Trade" page to buy or sell cryptocurrencies.
 4. Check your transaction history on the "History" page.
 
-## Challenges
-- Implementing portfolio calculations (e.g., average buy price, profit/loss).
-- Debugging trade validation (e.g., insufficient balance/coins).
 
 ## Future Improvements
-- Add real-time price updates using a free API (e.g., CoinGecko).
+- ~~Add real-time price updates using a free API (e.g., CoinGecko).~~
 - Implement portfolio charts using Chart.js.
-- Add a leaderboard to rank users by portfolio value.
-- Make the platform mobile-friendly with responsive design.
+- Add more coins and fetch prices using API
+- Add coin information and historical charts
+- Major Front-end Overhaul
