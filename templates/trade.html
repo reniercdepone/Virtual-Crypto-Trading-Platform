@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Trade
+{% endblock %}
+
+{% block body %}
+    <h1>Trade Cryptocurrencies</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <div class="form-group">
+            <label for="coin">Cryptocurrency:</label>
+            <select name="coin" class="form-control" required>
+                {% for coin, price in prices.items() %}
+                    <option value="{{ coin }}">{{ coin }} - ${{ "%.2f"|format(price) }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="action">Action:</label>
+            <select name="action" class="form-control" required>
+                <option value="buy">Buy</option>
+                <option value="sell">Sell</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" class="form-control" step="0.0001" min="0.0001" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Trade</button>
+    </form>
+{% endblock %}
