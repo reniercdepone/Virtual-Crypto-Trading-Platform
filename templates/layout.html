@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %} - Crypto Trading Platform</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item has-text-weight-bold" href="{{ url_for('index') }}">
-                <i class="fas fa-coins mr-2"></i>
-                Crypto Trading
+                <i class="fas fa-coins mr-2"></i>Crypto Trading
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
                 <span aria-hidden="true"></span>
@@ -24,84 +23,70 @@
         </div>
 
         <div id="navbarMenu" class="navbar-menu">
-            <div class="navbar-end">
+            <div class="navbar-start">
                 {% if 'user_id' in session %}
                 <a class="navbar-item" href="{{ url_for('index') }}">
-                    <i class="fas fa-home mr-1"></i> Dashboard
+                    <i class="fas fa-home mr-1"></i>Dashboard
                 </a>
                 <a class="navbar-item" href="{{ url_for('trade') }}">
-                    <i class="fas fa-exchange-alt mr-1"></i> Trade
+                    <i class="fas fa-exchange-alt mr-1"></i>Trade
                 </a>
                 <a class="navbar-item" href="{{ url_for('history') }}">
-                    <i class="fas fa-history mr-1"></i> History
+                    <i class="fas fa-history mr-1"></i>History
                 </a>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        <i class="fas fa-user mr-1"></i>
-                        {{ session.get('username', 'Account') }}
-                    </a>
-                    <div class="navbar-dropdown">
-                        <a class="navbar-item" href="{{ url_for('logout') }}">
-                            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                {% endif %}
+            </div>
+
+            <div class="navbar-end">
+                {% if 'user_id' in session %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt mr-1"></i>Logout
                         </a>
                     </div>
                 </div>
                 {% else %}
-                <a class="navbar-item" href="{{ url_for('login') }}">
-                    <i class="fas fa-sign-in-alt mr-1"></i> Login
-                </a>
-                <a class="navbar-item" href="{{ url_for('register') }}">
-                    <i class="fas fa-user-plus mr-1"></i> Register
-                </a>
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-light" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt mr-1"></i>Login
+                        </a>
+                        <a class="button is-info" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus mr-1"></i>Register
+                        </a>
+                    </div>
+                </div>
                 {% endif %}
             </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="columns is-gapless">
-        <!-- Sidebar -->
-        {% if 'user_id' in session %}
-        <div class="column is-2">
-            <aside class="sidebar menu">
-                <p class="menu-label">
-                    Portfolio
-                </p>
-                <ul class="menu-list">
-                    <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}is-active{% endif %}">
-                        <i class="fas fa-wallet mr-1"></i> Overview
-                    </a></li>
-                    <li><a href="{{ url_for('trade') }}" class="{% if request.endpoint == 'trade' %}is-active{% endif %}">
-                        <i class="fas fa-exchange-alt mr-1"></i> Trade
-                    </a></li>
-                    <li><a href="{{ url_for('history') }}" class="{% if request.endpoint == 'history' %}is-active{% endif %}">
-                        <i class="fas fa-history mr-1"></i> Transaction History
-                    </a></li>
-                </ul>
-            </aside>
-        </div>
-        {% endif %}
+    <main>
+        <!-- Flash Messages -->
+        <section class="section pt-4 pb-4">
+            <div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="notification is-{{ 'danger' if category == 'error' else 'success' }}">
+                                <button class="delete"></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </section>
 
-        <!-- Main Content Area -->
-        <div class="column">
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="notification flash-message is-{{ category }}">
-                            <button class="delete"></button>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-
-            <div class="content-area">
+        <!-- Main Content -->
+        <section class="section">
+            <div class="container">
                 {% block content %}
                 {% endblock %}
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
@@ -110,12 +95,12 @@
                 <strong>Crypto Trading Platform</strong> &copy; {{ current_year }}. All rights reserved.
             </p>
             <p>
-                <small>Powered by Flask and Bulma</small>
+                <small>Prices provided by CoinGecko API</small>
             </p>
         </div>
     </footer>
 
-    <!-- JavaScript for navbar burger and flash message dismissal -->
+    <!-- JavaScript for navbar burger and notification dismissal -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Navbar burger functionality
@@ -131,7 +116,7 @@
                 });
             }
 
-            // Flash message dismissal
+            // Notification dismiss functionality
             (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
                 const $notification = $delete.parentNode;
                 $delete.addEventListener('click', () => {

@@ -17,6 +17,13 @@ db = SQLAlchemy(app)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# make current year available   
+@app.context_processor
+def utility_processor():
+    def get_current_year():
+        return datetime.now().year
+    return dict(current_year=get_current_year())
+
 # User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -283,8 +290,8 @@ def trade():
 
         flash(f'{action.capitalize()} successful!', 'success')
         return redirect(url_for('index'))
-
-    return render_template('trade.html', prices=crypto_prices)
+    user = User.query.get(session['user_id'])
+    return render_template('trade.html', prices=crypto_prices, user_balance=user.balance)
 
 @app.route('/history')
 @login_required

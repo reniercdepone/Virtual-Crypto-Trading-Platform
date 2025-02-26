@@ -1,121 +1,102 @@
 {% extends "layout.html" %}
-
-{% block title %}
-    Dashboard
-{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <!-- User Welcome and Balance -->
-    <div class="columns is-vcentered">
-        <div class="column">
-            <h1 class="title is-4 has-text-primary">Welcome, {{ user.username }}!</h1>
-        </div>
-        <div class="column is-narrow">
-            <div class="balance-box">
-                <p class="subtitle is-6 has-text-grey">Cash Balance</p>
-                <p class="title is-5">${{ "%.2f"|format(user.balance) }}</p>
+<div class="columns is-centered">
+    <div class="column is-four-fifths">
+        <!-- Portfolio Summary -->
+        <div class="card mb-5">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <i class="fas fa-wallet mr-2"></i> Portfolio Summary
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="columns">
+                    <div class="column">
+                        <div class="notification is-primary">
+                            <p class="title is-4">${{ total_value | round(2) }}</p>
+                            <p class="subtitle">Total Portfolio Value</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="notification is-info">
+                            <p class="title is-4">${{ user.balance | round(2) }}</p>
+                            <p class="subtitle">Cash Balance</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="column is-narrow">
-            <div class="balance-box">
-                <p class="subtitle is-6 has-text-grey">Portfolio Value</p>
-                <p class="title is-5">${{ "%.2f"|format(total_value) }}</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Market Prices -->
-    <div class="card market-prices">
-        <header class="card-header">
-            <p class="card-header-title">
-                Market Prices
-            </p>
-        </header>
-        <div class="card-content">
-            <div class="table-container">
-                <table class="table is-fullwidth is-hoverable">
-                    <thead>
-                        <tr>
-                            <th>Cryptocurrency</th>
-                            <th class="has-text-right">Price (USD)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for coin, price in prices.items() %}
-                        <tr>
-                            <td>
-                                <span class="coin-symbol">{{ coin }}</span>
-                            </td>
-                            <td class="has-text-right">
-                                ${{ "%.2f"|format(price) }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <!-- Current Prices -->
+        <div class="card mb-5">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <i class="fas fa-chart-line mr-2"></i> Current Prices
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="columns is-multiline">
+                    {% for coin, price in prices.items() %}
+                    <div class="column is-one-third">
+                        <div class="notification is-light">
+                            <strong>{{ coin }}</strong>: ${{ price | round(2) }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Portfolio -->
-    <div class="card portfolio-section">
-        <header class="card-header">
-            <p class="card-header-title">
-                Your Portfolio
-            </p>
-            <div class="card-header-icon">
-                <a href="{{ url_for('trade') }}" class="button is-primary is-small">
-                    <span class="icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </span>
-                    <span>Trade Now</span>
-                </a>
+        <!-- Portfolio Details -->
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <i class="fas fa-coins mr-2"></i> Your Holdings
+                </p>
+            </header>
+            <div class="card-content">
+                {% if portfolio %}
+                <div class="table-container">
+                    <table class="table is-fullwidth is-striped is-hoverable">
+                        <thead>
+                            <tr>
+                                <th class="has-text-light">Coin</th>
+                                <th class="has-text-light">Quantity</th>
+                                <th class="has-text-light">Avg. Buy Price</th>
+                                <th class="has-text-light">Current Price</th>
+                                <th class="has-text-light">Current Value</th>
+                                <th class="has-text-light">Profit/Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in portfolio %}
+                            <tr>
+                                <td class="has-text-light">{{ item.coin }}</td>
+                                <td class="has-text-light">{{ item.quantity | round(4) }}</td>
+                                <td class="has-text-light">${{ item.average_buy_price | round(2) }}</td>
+                                <td class="has-text-light">${{ item.current_price | round(2) }}</td>
+                                <td class="has-text-light">${{ item.value | round(2) }}</td>
+                                <td>
+                                    <span class="tag {% if item.profit_loss >= 0 %}is-success{% else %}is-danger{% endif %}">
+                                        ${{ item.profit_loss | round(2) }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="notification is-info">
+                    <p>Your portfolio is empty. Start trading to build your portfolio!</p>
+                    <a href="{{ url_for('trade') }}" class="button is-primary mt-3">
+                        <i class="fas fa-exchange-alt mr-2"></i> Start Trading
+                    </a>
+                </div>
+                {% endif %}
             </div>
-        </header>
-        <div class="card-content">
-            {% if portfolio %}
-            <div class="table-container">
-                <table class="table is-fullwidth is-hoverable">
-                    <thead>
-                        <tr>
-                            <th>Coin</th>
-                            <th class="has-text-right">Quantity</th>
-                            <th class="has-text-right">Avg. Buy Price</th>
-                            <th class="has-text-right">Current Price</th>
-                            <th class="has-text-right">Value</th>
-                            <th class="has-text-right">Profit/Loss</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in portfolio %}
-                        <tr>
-                            <td>
-                                <span class="coin-symbol">{{ item.coin }}</span>
-                            </td>
-                            <td class="has-text-right">{{ item.quantity }}</td>
-                            <td class="has-text-right">${{ "%.2f"|format(item.average_buy_price) }}</td>
-                            <td class="has-text-right">${{ "%.2f"|format(item.current_price) }}</td>
-                            <td class="has-text-right">${{ "%.2f"|format(item.value) }}</td>
-                            <td class="has-text-right profit-loss {% if item.profit_loss >= 0 %}has-text-success{% else %}has-text-danger{% endif %}">
-                                ${{ "%.2f"|format(item.profit_loss) }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="content has-text-centered">
-                <p class="subtitle is-6">You don't own any cryptocurrencies yet.</p>
-                <a href="{{ url_for('trade') }}" class="button is-primary">
-                    <span class="icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </span>
-                    <span>Start Trading</span>
-                </a>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>

@@ -1,28 +1,62 @@
 {% extends "layout.html" %}
+{% block title %}Register{% endblock %}
 
-{% block title %}
-    Register
-{% endblock %}
+{% block content %}
+<div class="columns is-centered">
+    <div class="column is-half">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <i class="fas fa-user-plus mr-2"></i> Create New Account
+                </p>
+            </header>
+            <div class="card-content">
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="field">
+                        <label class="label">Username</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="text" name="username" 
+                                   placeholder="Enter username" required
+                                   minlength="3" maxlength="80"
+                                   value="{{ request.form.username or '' }}">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-user"></i>
+                            </span>
+                        </div>
+                        <p class="help">Username must be 3-80 characters long</p>
+                    </div>
 
-{% block body %}
-    <h1>Register</h1>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-        <form method="POST">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" name="username" class="form-control" required>
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="password" name="password" 
+                                   placeholder="Enter password" required
+                                   minlength="6">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                        </div>
+                        <p class="help">Password must be at least 6 characters long</p>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" class="button is-primary is-fullwidth">
+                                <i class="fas fa-user-plus mr-2"></i> Register
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
-    <p>Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+            <footer class="card-footer">
+                <p class="card-footer-item">
+                    <span>
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}">Login here</a>
+                    </span>
+                </p>
+            </footer>
+        </div>
+    </div>
+</div>
 {% endblock %}
